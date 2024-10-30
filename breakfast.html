@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIET FOOD COURT</title>
+    <link rel="stylesheet" href="bstyles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            display: inline-block;
+            width: 200px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        #cartItems {
+            list-style: none;
+            padding: 0;
+        }
+
+        #cartItems li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ea8500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffcc00;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-control button {
+            margin: 0 5px;
+            padding: 5px;
+        }
+
+        #order {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KIET FOOD COURT</h1>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Menu Section -->
+    <section id="menu">
+        <h2>BREAKFAST</h2>
+        <div class="menu-item">
+            <img src="https://img.freepik.com/free-photo/delicious-indian-dosa-composition_23-2149086051.jpg" alt="DOSA" />
+            <h3>DOSA</h3>
+            <button onclick="addToCart('DOSA', 25)">Add to Cart - ₹25</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://img.freepik.com/free-photo/indian-tasty-roti-composition_23-2149073357.jpg" alt="CHAPATHI" />
+            <h3>CHAPATHI</h3>
+            <button onclick="addToCart('CHAPATHI', 30)">Add to Cart - ₹30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://img.freepik.com/premium-photo/puri-bhaji-indian-semi-dry-potato-spicy-recipe-also-known-as-batata-aloo-ki-sabji-served-with-fried-poori-selective-focus_466689-12815.jpg?semt=ais_hybrid" alt="POORI" />
+            <h3>POORI</h3>
+            <button onclick="addToCart('POORI', 30)">Add to Cart - ₹30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/13/4f/84/134f846ac7b84d106ae2a50e486cee2a.jpg" alt="IDLY" />
+            <h3>IDLY</h3>
+            <button onclick="addToCart('IDLY', 20)">Add to Cart - ₹20</button>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cartItems"></ul>
+        <button onclick="showOrderForm()">Proceed to Order</button>
+    </section>
+
+    <!-- Order Form Section -->
+    <section id="order">
+        <h2>Complete Your Order</h2>
+        <form id="orderForm" onsubmit="placeOrder(event)">
+            <label for="cartSummary">Your Order:</label>
+            <textarea id="cartSummary" name="cartSummary" readonly></textarea>
+
+            <button type="submit">Place Order</button>
+        </form>
+    </section>
+
+    <script>
+        let cart = []; // Initialize cart array
+        let totalAmount = 0; // Initialize total amount
+
+        function addToCart(itemName, itemPrice) {
+            // Check if item already exists in the cart
+            const existingItem = cart.find(item => item.name === itemName);
+            if (existingItem) {
+                existingItem.quantity += 1; // Increase quantity if item already exists
+            } else {
+                cart.push({ name: itemName, price: itemPrice, quantity: 1 }); // Add new item with quantity 1
+            }
+            totalAmount += itemPrice; // Update total amount
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartItemsElement = document.getElementById('cartItems');
+            cartItemsElement.innerHTML = ''; // Clear previous items
+
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ₹${item.price} x ${item.quantity}`;
+                const quantityControl = document.createElement('div');
+                quantityControl.classList.add('quantity-control');
+
+                // Add decrease button
+                const decreaseButton = document.createElement('button');
+                decreaseButton.textContent = '-';
+                decreaseButton.onclick = () => changeQuantity(item.name, -1);
+                quantityControl.appendChild(decreaseButton);
+
+                // Add increase button
+                const increaseButton = document.createElement('button');
+                increaseButton.textContent = '+';
+                increaseButton.onclick = () => changeQuantity(item.name, 1);
+                quantityControl.appendChild(increaseButton);
+
+                li.appendChild(quantityControl);
+                cartItemsElement.appendChild(li);
+            });
+        }
+
+        function changeQuantity(itemName, change) {
+            const item = cart.find(item => item.name === itemName);
+            if (item) {
+                const newQuantity = item.quantity + change;
+
+                if (newQuantity <= 0) {
+                    // Remove item from cart if quantity is zero or less
+                    totalAmount -= (item.price * item.quantity); // Adjust total amount
+                    cart = cart.filter(i => i.name !== itemName);
+                } else {
+                    item.quantity = newQuantity; // Update quantity
+                    totalAmount += (change * item.price); // Update total amount
+                }
+            }
+            updateCartDisplay(); // Refresh cart display
+        }
+
+        function showOrderForm() {
+            document.getElementById('cart').style.display = 'none';
+            document.getElementById('order').style.display = 'block';
+
+            // Populate order summary
+            const orderSummary = cart.map(item => `${item.name} - ₹${item.price} x ${item.quantity}`).join('\n');
+            document.getElementById('cartSummary').value = orderSummary;
+
+            // Store the total amount in session storage
+            sessionStorage.setItem('totalAmount', totalAmount);
+        }
+
+        function placeOrder(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Here, you can handle the order (send it to a server, etc.)
+            alert("Order placed successfully!");
+            // Redirect to the payment page
+            window.location.href = 'bpayment_timer.html'; // Change to your actual payment page
+        }
+    </script>
+</body>
+</html>
+<div class="return-button">
+    <a href="index.html">Return to Main Menu</a>
+</div>

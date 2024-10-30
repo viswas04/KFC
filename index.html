@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIET FOOD COURT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .button {
+            width: 300px;
+            height: 300px;
+            margin: 0 15px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #ed920b;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        /* Add background images to each button */
+        .button-breakfast {
+            background-image: url('https://t4.ftcdn.net/jpg/02/17/39/75/360_F_217397519_MqLzfynUsUKGvZj1AB3iPREmr11sYRhk.webp');
+        }
+        .button-lunch {
+            background-image: url('https://img.freepik.com/free-photo/close-up-appetizing-ramadan-meal_23-2151182438.jpg?ga=GA1.1.171304497.1728011801&semt=ais_hybrid');
+        }
+        .button-snacks {
+            background-image: url('https://i.pinimg.com/236x/68/5c/14/685c14c823f361e2daf0f5ec7848f136.jpg');
+        }
+        /* Hover effect: enlarge button and add shadow */
+        .button:hover {
+            transform: scale(1.1); /* Enlarges the button on hover */
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Adds shadow */
+        }
+        /* Style for the login button */
+        .login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .login-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KIET FOOD COURT</h1>
+        <div class="button-container">
+            <a href="breakfast.html" class="button button-breakfast">BREAKFAST</a>
+            <a href="afternoon.html" class="button button-lunch">LUNCH</a>
+            <a href="snacks.html" class="button button-snacks">SNACKS</a>
+        </div>
+    </div>
+
+    <!-- Login Button -->
+    <button class="login-btn" onclick="window.location.href='login.html'">Login</button>
+
+</body>
+</html>

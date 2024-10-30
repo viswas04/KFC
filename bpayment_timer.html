@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+            padding: 50px;
+        }
+        #timer {
+            font-size: 2em;
+            color: #ea8500;
+        }
+        img {
+            width: 300px; /* Adjust the size of your QR code */
+            height: auto;
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #ea8500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #ffcc00;
+        }
+        #amount-display {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Complete Your Payment</h1>
+    </header>   
+    <section>
+        <h2>Payment Timer</h2>
+        <div id="timer">05:00</div>
+        <h2>Scan this QR Code to complete your payment</h2>      
+        <!-- Display the amount -->
+        <div id="amount-display"></div>     
+        <img src="" alt="QR Code" id="qr-code-image"/>
+        <p>Please complete the payment before the timer runs out.</p>
+        <button onclick="goBack()">Go Back to Menu</button>
+    </section>
+    <script>
+        let timeLeft = 300; // 5 minutes in seconds
+        const timerElement = document.getElementById('timer');
+        const qrCodeImage = document.getElementById('qr-code-image');
+        const amountDisplay = document.getElementById('amount-display');
+        // Retrieve the amount from session storage
+        const amount = sessionStorage.getItem('totalAmount') || 0; // Default to 0 if no amount found
+        const vpa = "8247368859@ybl"; // Replace with your VPA
+        // Display the amount on the page
+        amountDisplay.textContent = `Total Amount: ₹${amount}`;
+        // UPI link with the dynamic amount
+        const upiLink = `upi://pay?pa=${vpa}&pn=YourName&am=${amount}&cu=INR`;
+       // Generate QR Code using the UPI link
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
+        qrCodeImage.src = qrCodeUrl;
+        // Timer countdown logic
+        const timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timeLeft--;
+            if (timeLeft < 0) {
+                clearInterval(timerInterval);
+                alert("Time is up! Please start the order again.");
+                window.location.href = "breakfast.html"; // Redirect to main menu after time runs out
+            }
+        }, 1000);
+        // Function to go back to the main menu
+        function goBack() {
+            clearInterval(timerInterval); // Clear the timer if going back
+            window.location.href = "breakfast.html"; // Redirect to the main menu page
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIET FOOD COURT</title>
+    <link rel="stylesheet" href="sstyles.css">
+    <style>
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-control button {
+            margin: 0 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KIET FOOD COURT</h1>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Menu Section -->
+    <section id="menu">
+        <h2>SNACKS</h2>
+        <!-- Add your items here -->
+        <div class="menu-item">
+            <img src="https://cdn.uengage.io/uploads/18085/image-914311-1692423599.jpeg" alt="THUMSUP" />
+            <h3>THUMSUP</h3>
+            <button onclick="addToCart('THUMSUP', 30)">Add to Cart - ₹30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnyamo6fYKd8MgxnQnpjMFFM1fcc1LKaTb5g&s" alt="SPRITE" />
+            <h3>SPRITE</h3>
+            <button onclick="addToCart('SPRITE', 30)">Add to Cart - 30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/474x/c6/12/c9/c612c9ca38cd7f6808846dde68d2cbeb.jpg" alt="MINUTE MAID" />
+            <h3>MINUTE MAID</h3>
+            <button onclick="addToCart('MINUTE MAID', 20)">Add to Cart - 20</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/31/e9/03/31e9032ddb8578f546bfeb9526979084.jpg" alt="SUGARCANE JUICE" />
+            <h3>SUGARCANE JUICE</h3>
+            <button onclick="addToCart('SUGARCANE JUICE', 20)">Add to Cart - 20</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/da/a1/c8/daa1c887c49019195eb0136b1bbe0566.jpg" alt="BANANA MILKSHAKE" />
+            <h3>BANANA MILKSHAKE</h3>
+            <button onclick="addToCart('BANANA MILKSHAKE', 35)">Add to Cart - 35</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/2d/61/72/2d617287af2d42bc908645daa48870b8.jpg" alt="GRAPE JUICE" />
+            <h3>GRAPE JUICE</h3>
+            <button onclick="addToCart('GRAPE JUICE', 35)">Add to Cart - 35</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.funfoodfrolic.com/wp-content/uploads/2021/11/Blog-Thumbnail.jpg" alt="BADAM MILK" />
+            <h3>BADAM MILK</h3>
+            <button onclick="addToCart('BADAM MILK', 40)">Add to Cart - 40</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://m.media-amazon.com/images/I/81oQOYKZHxL.jpg" alt="BINGO" />
+            <h3>BINGO</h3>
+            <button onclick="addToCart('BINGO', 10)">Add to Cart - 10</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-rendering-of-delicious-ice-cream-image_3767223.jpg" alt="ICECREAM" />
+            <h3>ICECREAM</h3>
+            <button onclick="addToCart('ICECREAM', 30)">Add to Cart - 30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://cococart.in/cdn/shop/products/1CH1646.png?v=1668520923" alt="CHOCOLATES" />
+            <h3>CHOCOLATES</h3>
+            <button onclick="addToCart('CHOCOLATES', 20)">Add to Cart - 20</button>
+        </div>
+    </section>
+        <!-- Add the rest of your items here -->
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cartItems"></ul>
+        <button onclick="showOrderForm()">Proceed to Order</button>
+    </section>
+
+    <!-- Order Form Section -->
+    <section id="order" style="display:none;">
+        <h2>Complete Your Order</h2>
+        <form id="orderForm" onsubmit="placeOrder(event)">
+            <label for="cartSummary">Your Order:</label>
+            <textarea id="cartSummary" name="cartSummary" readonly></textarea>
+
+            <button type="submit">Place Order</button>
+        </form>
+    </section>
+
+    <script>
+        let cart = []; // Initialize cart array
+        let totalAmount = 0; // Initialize total amount
+
+        function addToCart(itemName, itemPrice) {
+            const existingItem = cart.find(item => item.name === itemName);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: itemName, price: itemPrice, quantity: 1 });
+            }
+            totalAmount += itemPrice;
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartItemsElement = document.getElementById('cartItems');
+            cartItemsElement.innerHTML = '';
+
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ₹${item.price} x ${item.quantity}`;
+                const quantityControl = document.createElement('div');
+                quantityControl.classList.add('quantity-control');
+
+                const decreaseButton = document.createElement('button');
+                decreaseButton.textContent = '-';
+                decreaseButton.onclick = () => changeQuantity(item.name, -1);
+                quantityControl.appendChild(decreaseButton);
+
+                const increaseButton = document.createElement('button');
+                increaseButton.textContent = '+';
+                increaseButton.onclick = () => changeQuantity(item.name, 1);
+                quantityControl.appendChild(increaseButton);
+
+                li.appendChild(quantityControl);
+                cartItemsElement.appendChild(li);
+            });
+        }
+
+        function changeQuantity(itemName, change) {
+            const item = cart.find(item => item.name === itemName);
+            if (item) {
+                const newQuantity = item.quantity + change;
+
+                if (newQuantity <= 0) {
+                    totalAmount -= (item.price * item.quantity);
+                    cart = cart.filter(i => i.name !== itemName);
+                } else {
+                    item.quantity = newQuantity;
+                    totalAmount += (change * item.price);
+                }
+            }
+            updateCartDisplay();
+        }
+
+        function showOrderForm() {
+            document.getElementById('cart').style.display = 'none';
+            document.getElementById('order').style.display = 'block';
+
+            const orderSummary = cart.map(item => `${item.name} - ₹${item.price} x ${item.quantity}`).join('\n');
+            document.getElementById('cartSummary').value = orderSummary;
+
+            sessionStorage.setItem('totalAmount', totalAmount);
+        }
+        function placeOrder(event) {
+            event.preventDefault();
+            alert("Order placed successfully!");
+            window.location.href = 'spayment_timer.html';
+        }
+    </script>
+</body>
+</html>
+<div class="return-button">
+    <a href="index.html">Return to Main Menu</a>
+</div>

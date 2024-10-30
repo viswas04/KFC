@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIET FOOD COURT</title>
+    <link rel="stylesheet" href="astyles.css">
+    <style>
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-control button {
+            margin: 0 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KIET FOOD COURT</h1>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+    <!-- Menu Section -->
+    <section id="menu">
+        <h2>LUNCH</h2>
+        <div class="menu-item">
+            <img src="https://media.istockphoto.com/id/1255854695/photo/sambhar-rice.jpg?s=612x612&w=0&k=20&c=z0Hy9IhGtPncgrD8vMm7QhVr0BaZFPD76h_O2KYLU64=" alt="SAMBAR RICE" />
+            <h3>SAMBAR RICE</h3>
+            <button onclick="addToCart('SAMBAR RICE', 30)">Add to Cart - ₹30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://media.istockphoto.com/id/1393066617/photo/veg-biryani.jpg?s=612x612&w=0&k=20&c=Tio6ePLZi2s3KeinvZCAWa7dU1iLvbbl0aM4GENvoaw=" alt="VEG.BIRYANI" />
+            <h3>VEG.BIRYANI</h3>
+            <button onclick="addToCart('VEG.BIRYANI', 30)">Add to Cart - ₹30</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/564x/c2/b3/fd/c2b3fd99cedcb45c01f3562a57d21028.jpg" alt="CHICKEN FRIED RICE" />
+            <h3>CHICKEN FRIED RICE</h3>
+            <button onclick="addToCart('CHICKEN FRIED RICE', 100)">Add to Cart - ₹100</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/ac/c4/36/acc436cb8fde987c2abe8c7636f6e2d8.jpg" alt="EGG FRIED RICE" />
+            <h3>EGG FRIED RICE</h3>
+            <button onclick="addToCart('EGG FRIED RICE', 80)">Add to Cart - ₹80</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/ad/df/49/addf492b59788b564df13d1943d9084d.jpg" alt="EGG PUFF" />
+            <h3>EGG PUFF</h3>
+            <button onclick="addToCart('EGG PUFF', 25)">Add to Cart - ₹25</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/3f/f0/63/3ff063845b4c4b44e1441f269f36cb50.jpg" alt="VEG PUFF" />
+            <h3>VEG PUFF</h3>
+            <button onclick="addToCart('VEG PUFF', 20)">Add to Cart - ₹20</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/ed/23/35/ed2335a08f9dd1fcf6d59123eaf984c1.jpg" alt="VEG ROLL" />
+            <h3>VEG ROLL</h3>
+            <button onclick="addToCart('VEG ROLL', 40)">Add to Cart - ₹40</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://i.pinimg.com/236x/8d/f2/84/8df28441288ff5674732a6bb7b70944b.jpg" alt="CHICKEN ROLL" />
+            <h3>CHICKEN ROLL</h3>
+            <button onclick="addToCart('CHICKEN ROLL', 60)">Add to Cart - ₹60</button>
+        </div>
+    </section>
+    <!-- Cart Section -->
+    <section id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cartItems"></ul>
+        <button onclick="showOrderForm()">Proceed to Order</button>
+    </section>
+    <!-- Order Form Section -->
+    <section id="order" style="display:none;">
+        <h2>Complete Your Order</h2>
+        <form id="orderForm" onsubmit="placeOrder(event)">
+            <label for="cartSummary">Your Order:</label>
+            <textarea id="cartSummary" name="cartSummary" readonly></textarea>
+
+            <button type="submit">Place Order</button>
+        </form>
+    </section>
+    <script>
+        let cart = []; // Initialize cart array
+        let totalAmount = 0; // Initialize total amount
+        function addToCart(itemName, itemPrice) {
+            const existingItem = cart.find(item => item.name === itemName);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: itemName, price: itemPrice, quantity: 1 });
+            }
+            totalAmount += itemPrice;
+            updateCartDisplay();
+        }
+        function updateCartDisplay() {
+            const cartItemsElement = document.getElementById('cartItems');
+            cartItemsElement.innerHTML = '';
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ₹${item.price} x ${item.quantity}`;
+                const quantityControl = document.createElement('div');
+                quantityControl.classList.add('quantity-control');
+
+                const decreaseButton = document.createElement('button');
+                decreaseButton.textContent = '-';
+                decreaseButton.onclick = () => changeQuantity(item.name, -1);
+                quantityControl.appendChild(decreaseButton);
+
+                const increaseButton = document.createElement('button');
+                increaseButton.textContent = '+';
+                increaseButton.onclick = () => changeQuantity(item.name, 1);
+                quantityControl.appendChild(increaseButton);
+
+                li.appendChild(quantityControl);
+                cartItemsElement.appendChild(li);
+            });
+        }
+        function changeQuantity(itemName, change) {
+            const item = cart.find(item => item.name === itemName);
+            if (item) {
+                const newQuantity = item.quantity + change;
+                if (newQuantity <= 0) {
+                    totalAmount -= (item.price * item.quantity);
+                    cart = cart.filter(i => i.name !== itemName);
+                } else {
+                    item.quantity = newQuantity;
+                    totalAmount += (change * item.price);
+                }
+            }
+            updateCartDisplay();
+        }
+        function showOrderForm() {
+            document.getElementById('cart').style.display = 'none';
+            document.getElementById('order').style.display = 'block';
+            const orderSummary = cart.map(item => `${item.name} - ₹${item.price} x ${item.quantity}`).join('\n');
+            document.getElementById('cartSummary').value = orderSummary;
+            sessionStorage.setItem('totalAmount', totalAmount);
+            
+        }
+        function placeOrder(event) {
+            event.preventDefault();
+            alert("Order placed successfully!");
+            window.location.href = 'apayment_timer.html';
+        }
+    </script>
+</body>
+</html>
+<div class="return-button">
+    <a href="index.html">Return to Main Menu</a>
+</div>
